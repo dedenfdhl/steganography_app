@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:steganography_app/constants/custom_colors.dart';
 import 'package:steganography_app/constants/typo.dart';
 import 'package:steganography_app/views/main/learn/content/content.dart';
+import 'package:steganography_app/views/main/learn/content/quantum.dart';
+import 'package:steganography_app/views/main/learn/content/stegano.dart';
+import 'package:steganography_app/views/main/learn/content/stegano_kuantum.dart';
 import 'package:steganography_app/views/main/learn/content/summary.dart';
-
 
 import '../../../constants/common.dart';
 
@@ -20,51 +22,39 @@ class LearnView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _buildLearnItem(                                    //Menampilkan menu Learn
-            name: 'What is Steganography?',                             
-            icon: 'assets/images/Security.png',
+            name: 'STEGANOGRAFI',                             
+            icon: 'assets/images/u.png',
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => LearnContent(
-                    content: Common.steganographyContent,
-                    image: 'assets/images/Stego.png',
-                    title: 'Steganography',
-                  ),
+                  builder: (context) => SteganoLearn()
                 ),
               );
             },
           ),
           const SizedBox(height: 52),
           _buildLearnItem(
-            name: 'What is Quantum Technology?',
-            icon: 'assets/images/Security.png',
+            name: 'KOMPUTASI KUANTUM',
+            icon: 'assets/images/q.png',
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => LearnContent(
-                    content: Common.Quantum,
-                    image: 'assets/images/Quantum.png',
-                    title: 'Quantum Technology',
-                  ),
+                  builder: (context) => QuantumLearn()
                 ),
               );
             },
           ),
           const SizedBox(height: 52),
           _buildLearnItem(
-            name: 'How does Quantum Steganography Work?',
-            icon: 'assets/images/Security.png',
+            name: 'STEGANOGRAFI KUANTUM',
+            icon: 'assets/images/sg.png',
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => LearnContent(
-                    content: Common.Quantum,
-                    image: 'assets/images/Stego.png',
-                    title: 'Quantum Steganography',
-                  ),
+                  builder: (context) => SteganoKuantum()
                 ),
               );
             },
@@ -72,8 +62,10 @@ class LearnView extends StatelessWidget {
           SizedBox(height: 52),
           InkWell(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => SummaryLearn()));
-            },
+              Navigator.push(context, MaterialPageRoute(builder: (context) => SummaryLearn()
+              ),
+            );
+          },
             child: Container(
         height: 78,
         decoration: BoxDecoration(
@@ -85,15 +77,15 @@ class LearnView extends StatelessWidget {
                   offset: const Offset(0, 4),
                   blurRadius: 4)
             ]),
-        child: const Stack(
+        child:  Stack(
           children: [
             Center(
               child: Text(
                 'Summary',
-                style: TextStyle(fontSize: 32, color: Color(0xffF7E7FB)),
+                style: AppTypography.medium.copyWith(fontSize: 30, color: Color(0xffF7E7FB)),
               ),
             ),
-            Align(
+            const Align(
                 alignment: Alignment.centerRight,
                 child: Icon(Icons.chevron_right,
                     size: 50, color: Color(0xffF7E7FB)))
@@ -129,14 +121,14 @@ class LearnView extends StatelessWidget {
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                child: Image.asset(icon, fit: BoxFit.contain,),
+                child: Image.asset(icon, fit: BoxFit.contain),
                 height: double.infinity,
-                width: 70,
+                width: 65,
                 
               ),
               const SizedBox(width: 8),
@@ -144,7 +136,7 @@ class LearnView extends StatelessWidget {
                 child: Text(
                   name,
                   style: AppTypography.medium.copyWith(
-                      fontSize: 18, color: CustomColors.primaryPurple),
+                      fontSize: 20, color: CustomColors.primaryPurple),
                   textAlign: TextAlign.center,
                 ),
               ),

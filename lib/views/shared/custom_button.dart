@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:steganography_app/constants/custom_colors.dart';
+import 'package:steganography_app/constants/typo.dart';
 
 class CustomButton extends StatelessWidget {
   final String textButton;
@@ -25,7 +26,7 @@ class CustomButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 16),
         child: Text(
           textButton,
-          style: const TextStyle(fontSize: 24),
+          style: AppTypography.regular12.copyWith(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
     );

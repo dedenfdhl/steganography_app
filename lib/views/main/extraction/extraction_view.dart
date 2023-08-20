@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'dart:developer' as dev;
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:steganography_app/constants/common.dart';
 
 import 'package:steganography_app/constants/custom_colors.dart';
 import 'package:steganography_app/constants/typo.dart';
@@ -23,21 +25,30 @@ class _ExtractionViewState extends State<ExtractionView> {
   final imagePicker = ImagePickerHandler();
   final TextEditingController keyController = TextEditingController();
 
-  File? stegoImage;
+  File? matFile;
   List<String> methods = [
     'Choose Method',
     'Quantum DCT',
-    'Quantum DWT',
+    'Quantum Wavelet',
     'Quantum SS',
   ];
 
   String? methodController = 'Choose Method';
 
   Future<void> submitExtraction() async {
-    if (stegoImage != null &&
+    if (matFile != null &&
         keyController.text.isNotEmpty &&
         methodController != 'Choose Method' &&
         AuthService.currentUser != null) {
+      // String stegoExtension = '';
+      // if (matFile!.path.endsWith("png")) {
+      //   stegoExtension = 'png';
+      // } else if (matFile!.path.endsWith("jpg")) {
+      //   stegoExtension = 'jpg';
+      // } else if (matFile!.path.endsWith("jpeg")) {
+      //   stegoExtension = 'jpeg';
+      // }
+
       // userid_metode_attack_H_timelapse
       final String method =
           methodController!.replaceAll('Quantum ', '').toLowerCase();
@@ -45,27 +56,29 @@ class _ExtractionViewState extends State<ExtractionView> {
           (DateTime.now().millisecondsSinceEpoch / 1000).floor().toString();
 
       final String refStego =
-          'StegoEx/${AuthService.currentUser!.uid}_${method.toLowerCase()}_SI_$timelapse';
+          'StegoEx/${AuthService.currentUser!.uid}_${method.toLowerCase()}_SI_$timelapse.mat';
 
       try {
-        FirebaseStorageService.uploadImage(stegoImage!, refStego);
+        FirebaseStorageService.uploadImage(matFile!, refStego);
 
         FirebaseDatabaseService.addData(
           'Extraction/StegoEx/$timelapse',
           {
             'key': keyController.text,
             'metode': method.toLowerCase(),
-            'nama_file': refStego,
+            'nama_file': refStego.replaceAll('StegoEx/', ''),
             'path_file': 'StegoEx/',
-            'status': 0,
+            'status': '0',
             'timestamp': timelapse,
-            'user_id': AuthService.currentUser!.uid,
+            'userid': AuthService.currentUser!.uid,
           },
         );
 
-        stegoImage = null;
+        matFile = null;
         keyController.clear();
-        methodController = '';
+        methodController = 'Choose Method';
+
+        setState(() {});
 
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
@@ -114,6 +127,20 @@ class _ExtractionViewState extends State<ExtractionView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 16),
+                Text('Notes:', style: AppTypography.subHeading),
+                Container(
+                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                    height: 150,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black)
+                    ),
+                    child: SingleChildScrollView(
+                      child: 
+                        Text(Common.guideExraction, style: AppTypography.regular12.copyWith(fontSize: 14))
+                      ,
+                    ),
+                ),
+                SizedBox(height: 16),
                 const Text(
                   'Method',
                   style: AppTypography.title,
@@ -150,18 +177,23 @@ class _ExtractionViewState extends State<ExtractionView> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                const Text('Stego Image', style: AppTypography.title),
+                const Text('Mat File', style: AppTypography.title),
                 CustomTextFieldV2(
                   controller: TextEditingController(
-                      text: stegoImage == null ? '' : stegoImage?.path),
+                      text: matFile == null ? '' : matFile?.path),
                   readOnly: true,
                   onTap: () async {
-                    stegoImage = await imagePicker.pickImage();
-                    dev.log('stegoImage: ${stegoImage?.uri}');
+                    FilePickerResult? result =
+                        await FilePicker.platform.pickFiles();
+
+                    if (result != null) {
+                      matFile = File(result.files.single.path!);
+                      dev.log('matFile: ${matFile?.uri}');
+                    }
 
                     setState(() {});
                   },
-                  prefixIcon: stegoImage == null
+                  prefixIcon: matFile == null
                       ? Container(
                           margin: const EdgeInsets.only(left: 10),
                           padding: const EdgeInsets.symmetric(
@@ -177,6 +209,7 @@ class _ExtractionViewState extends State<ExtractionView> {
                 ),
                 const SizedBox(height: 12),
                 const Text('Key', style: AppTypography.title),
+                Text('(Key atau kunci merupakan kombinasi angka dari 1-1023)', style: AppTypography.regular12.copyWith(fontSize: 12)),
                 CustomTextFieldV2(
                   controller: keyController,
                   hintText: 'Enter your key heres',
@@ -197,64 +230,64 @@ class _ExtractionViewState extends State<ExtractionView> {
                     onPressed: submitExtraction,
                     child: Text('Extraction',
                         style: AppTypography.regular12.copyWith(
-                            fontSize: 16, color: const Color(0xff602B6F))),
+                            fontSize: 16, color: const Color(0xff602B6F), fontWeight: FontWeight.bold)),
                   ),
                 ),
-                const SizedBox(height: 15),
-                Center(
-                    child: Text('Watermarking',
-                        style: AppTypography.regular12.copyWith(fontSize: 18))),
-                const SizedBox(height: 10),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 20),
-                  width: double.infinity,
-                  height: 236,
-                  color: Colors.white,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            side: const BorderSide(
-                              color: CustomColors.primaryPurple,
-                            ),
-                          ),
-                          backgroundColor: Colors.transparent,
-                          elevation: 0),
-                      onPressed: () {},
-                      child: Text(
-                        'Save',
-                        style: AppTypography.regular12.copyWith(
-                          fontSize: 14,
-                          color: CustomColors.primaryPurple,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 40),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            side: const BorderSide(
-                              color: CustomColors.primaryPurple,
-                            ),
-                          ),
-                          backgroundColor: Colors.transparent,
-                          elevation: 0),
-                      onPressed: () {},
-                      child: Text(
-                        'Share',
-                        style: AppTypography.regular12.copyWith(
-                          fontSize: 14,
-                          color: CustomColors.primaryPurple,
-                        ),
-                      ),
-                    ),
-                  ],
-                )
+                // const SizedBox(height: 15),
+                // Center(
+                //     child: Text('Watermarking',
+                //         style: AppTypography.regular12.copyWith(fontSize: 18))),
+                // const SizedBox(height: 10),
+                // Container(
+                //   margin: const EdgeInsets.only(bottom: 20),
+                //   width: double.infinity,
+                //   height: 236,
+                //   color: Colors.white,
+                // ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     ElevatedButton(
+                //       style: ElevatedButton.styleFrom(
+                //           shape: RoundedRectangleBorder(
+                //             borderRadius: BorderRadius.circular(10),
+                //             side: const BorderSide(
+                //               color: CustomColors.primaryPurple,
+                //             ),
+                //           ),
+                //           backgroundColor: Colors.transparent,
+                //           elevation: 0),
+                //       onPressed: () {},
+                //       child: Text(
+                //         'Save',
+                //         style: AppTypography.regular12.copyWith(
+                //           fontSize: 14,
+                //           color: CustomColors.primaryPurple,
+                //         ),
+                //       ),
+                //     ),
+                //     const SizedBox(width: 40),
+                //     ElevatedButton(
+                //       style: ElevatedButton.styleFrom(
+                //           shape: RoundedRectangleBorder(
+                //             borderRadius: BorderRadius.circular(10),
+                //             side: const BorderSide(
+                //               color: CustomColors.primaryPurple,
+                //             ),
+                //           ),
+                //           backgroundColor: Colors.transparent,
+                //           elevation: 0),
+                //       onPressed: () {},
+                //       child: Text(
+                //         'Share',
+                //         style: AppTypography.regular12.copyWith(
+                //           fontSize: 14,
+                //           color: CustomColors.primaryPurple,
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // )
               ],
             ),
           ),

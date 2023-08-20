@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:steganography_app/constants/custom_colors.dart';
+import 'package:steganography_app/splash_screen.dart';
 // ignore: unused_import
 import 'package:steganography_app/views/login/login_view.dart';
 import 'package:steganography_app/wrapper.dart';
@@ -23,7 +24,7 @@ class MainApp extends StatelessWidget {
         scaffoldBackgroundColor: CustomColors.background,
       
       ),
-      home: const Wrapper(), 
+      home: const SplashScreen(), 
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:steganography_app/constants/typo.dart';
 import '../../constants/custom_colors.dart';
 
 class CustomTextField extends StatelessWidget {
@@ -19,7 +20,7 @@ class CustomTextField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       textAlign: TextAlign.center,
-      style: const TextStyle(fontSize: 20, color: CustomColors.primaryPurple),
+      style:  AppTypography.regular12.copyWith(fontSize: 20, color: CustomColors.primaryPurple),
       obscureText: obscureText,
       decoration: InputDecoration(
         suffixIcon: suffixIcon,
@@ -48,7 +49,7 @@ class CustomTextField extends StatelessWidget {
       // ignore: body_might_complete_normally_nullable
       validator: (value) {
         if (value!.isEmpty) {
-          return 'This Field cannot be empyt';
+          return 'This Field cannot be empty!';
         }
       },
     );

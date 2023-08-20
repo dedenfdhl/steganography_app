@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:steganography_app/data/auth_service.dart';
+import 'package:steganography_app/splash_screen.dart';
 import 'package:steganography_app/views/login/login_view.dart';
 import 'package:steganography_app/views/main/main_view.dart';
 

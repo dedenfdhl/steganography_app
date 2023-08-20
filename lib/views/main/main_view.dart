@@ -5,8 +5,8 @@ import 'package:steganography_app/views/main/attack/attack_view.dart';
 import 'package:steganography_app/views/main/embedding/embedding_view.dart';
 import 'package:steganography_app/views/main/extraction/extraction_view.dart';
 import 'package:steganography_app/views/main/learn/learn_view.dart';
+import 'package:steganography_app/views/main/your_project/your_project.dart';
 import 'package:steganography_app/views/profil_screen/profil_screen.dart';
-
 import '../../constants/custom_colors.dart';
 
 class MainView extends StatefulWidget {
@@ -17,7 +17,7 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
-  final PageController _pageController =                         //Perintah untuk mengendalikan tampilan interface yang terdiri dari beberapa halaman
+  final PageController _pageController =          //Perintah untuk mengendalikan tampilan interface yang terdiri dari beberapa halaman
       PageController(initialPage: 0, viewportFraction: 1); 
   int currentPage = 0;
 
@@ -34,11 +34,11 @@ class _MainViewState extends State<MainView> {
               child: Stack(
                 children: [
                   Center(
-                    child: Container(
-                      height: 100,
+                    child: SizedBox(
+                      height: 120,
                       width: 140,
                       child: 
-                      Image.asset('assets/images/1.png', fit: BoxFit.cover),
+                      Image.asset('assets/images/Logo.png', fit: BoxFit.cover),
 
                     ),
                   ),
@@ -46,7 +46,7 @@ class _MainViewState extends State<MainView> {
                     alignment: Alignment.centerRight,
                     child: IconButton(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilScreen()));
                       },
                       icon: const Icon(Icons.account_circle),
                       color: CustomColors.primaryPurple,
@@ -58,27 +58,26 @@ class _MainViewState extends State<MainView> {
             ),
             Container(
               width: MediaQuery.of(context).size.width,
-              height: 50,
+              height: 60,
               color: CustomColors.primaryPurple,
-              child: Row(
+              child: ListView(
+                scrollDirection: Axis.horizontal,
                 children: [
-                  Expanded(
-                    child: _buildItemTabBar(                    //Menampilkan Menu pada Tabbar
-                      name: 'Learn',
-                      pageNumber: 0,
-                    ),
+                  _buildItemTabBar(                    //Menampilkan Menu pada Tabbar
+                    name: 'Learn',
+                    pageNumber: 0,
                   ),
-                  Expanded(
-                    child: _buildItemTabBar(
-                      name: 'Embedding',
-                      pageNumber: 1,
-                    ),
+                  _buildItemTabBar(
+                    name: 'Embedding',
+                    pageNumber: 1,
                   ),
-                  Expanded(
-                    child: _buildItemTabBar(
-                      name: 'Extraction',
-                      pageNumber: 2,
-                    ),
+                  _buildItemTabBar(
+                    name: 'Extraction',
+                    pageNumber: 2,
+                  ),
+                  _buildItemTabBar(
+                    name: 'Results',
+                    pageNumber: 3,
                   ),
                 ],
               ),
@@ -95,6 +94,7 @@ class _MainViewState extends State<MainView> {
                   LearnView(),
                   EmbeddingView(),
                   ExtractionView(),
+                  YourProject()
                 ],
               ),
             )
@@ -116,6 +116,7 @@ class _MainViewState extends State<MainView> {
         });
       },
       child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 12),
         alignment: Alignment.center,
         height: double.infinity,
         decoration: currentPage == pageNumber
@@ -128,7 +129,7 @@ class _MainViewState extends State<MainView> {
             : null,
         child: Text(
           name,
-          style: AppTypography.regular.copyWith(
+          style: AppTypography.regular12.copyWith(
             color: CustomColors.secondaryOrange,
             fontSize: 16,
           ),

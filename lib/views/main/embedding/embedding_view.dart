@@ -2,6 +2,7 @@
 import 'dart:developer' as dev;
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:steganography_app/constants/common.dart';
 import 'package:steganography_app/constants/custom_colors.dart';
 import 'package:steganography_app/constants/typo.dart';
 import 'package:steganography_app/model/image_picker.dart';
@@ -27,19 +28,18 @@ class _EmbeddingViewState extends State<EmbeddingView> {
   File? watermarkImage;
 
   List<String> noises = [
-    'Choose Noise',
-    'Classical Noise',
-    'Quantum Noise',
+    'Without Attack',
+    'Quantum Attack',
   ];
 
   List<String> methods = [
     'Choose Method',
     'Quantum DCT',
-    'Quantum DWT',
+    'Quantum Wavelet',
     'Quantum SS',
   ];
 
-  String? noiseController = 'Choose Noise';
+  String? noiseController = 'Without Attack';
   String? methodController = 'Choose Method';
 
   final TextEditingController keyController = TextEditingController();
@@ -48,14 +48,31 @@ class _EmbeddingViewState extends State<EmbeddingView> {
     if (citraImage != null &&
         watermarkImage != null &&
         keyController.text.isNotEmpty &&
-        noiseController != 'Choose Noise' &&
+        // noiseController != 'Choose Noise' &&
         methodController != 'Choose Method' &&
         AuthService.currentUser != null) {
+      String citraExtension = '';
+      if (citraImage!.path.endsWith("png")) {
+        citraExtension = 'png';
+      } else if (citraImage!.path.endsWith("jpg")) {
+        citraExtension = 'jpg';
+      } else if (citraImage!.path.endsWith("jpeg")) {
+        citraExtension = 'jpeg';
+      }
+
+      String watermarkExtension = '';
+      if (watermarkImage!.path.endsWith("png")) {
+        watermarkExtension = 'png';
+      } else if (watermarkImage!.path.endsWith("jpg")) {
+        watermarkExtension = 'jpg';
+      } else if (watermarkImage!.path.endsWith("jpeg")) {
+        watermarkExtension = 'jpeg';
+      }
       // userid_metode_attack_H_timelapse
       final String method =
           methodController!.replaceAll('Quantum ', '').toLowerCase();
       final String noise =
-          noiseController!.replaceAll(' Noise', '').toLowerCase();
+          noiseController!.replaceAll('Attack', '').toLowerCase();
       final String timelapse =
           (DateTime.now().millisecondsSinceEpoch / 1000).floor().toString();
 
@@ -64,9 +81,9 @@ class _EmbeddingViewState extends State<EmbeddingView> {
       // final String refWatermark =
       //     'WatermarkEm/${AuthService.currentUser!.uid}_${method}_${noise}_${keyController.text}_W_$timelapse';
       final String refCitra =
-          'HostEm/${AuthService.currentUser!.uid}_${method.toLowerCase()}_H_$timelapse';
+          'HostEm/${AuthService.currentUser!.uid}_${method.toLowerCase()}_H_$timelapse.$citraExtension';
       final String refWatermark =
-          'WatermarkEm/${AuthService.currentUser!.uid}_${method.toLowerCase()}_W_$timelapse';
+          'WatermarkEm/${AuthService.currentUser!.uid}_${method.toLowerCase()}_W_$timelapse.$watermarkExtension';
 
       try {
         FirebaseStorageService.uploadImage(citraImage!, refCitra);
@@ -75,25 +92,27 @@ class _EmbeddingViewState extends State<EmbeddingView> {
         FirebaseDatabaseService.addData(
           'Embedding/HostEm/$timelapse',
           {
+            'attack': noise == 'without' ? '0' : '0.1',
             'key': keyController.text,
             'metode': method.toLowerCase(),
-            'nama_file': refCitra,
+            'nama_file': refCitra.replaceAll('HostEm/', ''),
             'path_file': 'HostEm/',
-            'status': 0,
+            'status': '0',
             'timestamp': timelapse,
-            'user_id': AuthService.currentUser!.uid,
+            'userid': AuthService.currentUser!.uid,
           },
         );
         FirebaseDatabaseService.addData(
           'Embedding/WatermarkEm/$timelapse',
           {
+            'attack': noise == 'without' ? '0' : '0.1',
             'key': keyController.text,
             'metode': method.toLowerCase(),
-            'nama_file': refWatermark,
+            'nama_file': refWatermark.replaceAll('WatermarkEm/', ''),
             'path_file': 'WatermarkEm/',
-            'status': 0,
+            'status': '0',
             'timestamp': timelapse,
-            'user_id': AuthService.currentUser!.uid,
+            'userid': AuthService.currentUser!.uid,
           },
         );
 
@@ -109,8 +128,9 @@ class _EmbeddingViewState extends State<EmbeddingView> {
         citraImage = null;
         watermarkImage = null;
         keyController.clear();
-        noiseController = '';
-        methodController = '';
+        noiseController = 'Without Attack';
+        methodController = 'Choose Method';
+        setState(() {});
 
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
@@ -159,6 +179,20 @@ class _EmbeddingViewState extends State<EmbeddingView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox( height: 16),
+                  Text('Notes:', style: AppTypography.subHeading,),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                    height: 150,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black)
+                    ),
+                    child: SingleChildScrollView(
+                      child: 
+                        Text(Common.guideEmbedding, style: AppTypography.regular12.copyWith(fontSize: 14))
+                      ,
+                    ),
+                  ), 
                   const SizedBox(height: 16),
                   const Text(
                     'Method',
@@ -196,7 +230,7 @@ class _EmbeddingViewState extends State<EmbeddingView> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  const Text('Citra Host', style: AppTypography.title),
+                  const Text('Host Image', style: AppTypography.title),
                   CustomTextFieldV2(
                     controller: TextEditingController(
                         text: citraImage == null ? '' : citraImage?.path),
@@ -235,7 +269,7 @@ class _EmbeddingViewState extends State<EmbeddingView> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Watermarking',
+                    'Hidden Image',
                     style: AppTypography.title,
                   ),
                   CustomTextFieldV2(
@@ -268,6 +302,7 @@ class _EmbeddingViewState extends State<EmbeddingView> {
                     'Key',
                     style: AppTypography.title,
                   ),
+                  Text('(Key atau kunci merupakan kombinasi angka dari 1-1023)', style: AppTypography.regular12.copyWith(fontSize: 12)),
                   TextFormField(
                     controller: keyController,
                     decoration: InputDecoration(
@@ -295,7 +330,7 @@ class _EmbeddingViewState extends State<EmbeddingView> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Noise',
+                    'Attack',
                     style: AppTypography.title,
                   ),
                   Container(
@@ -321,7 +356,7 @@ class _EmbeddingViewState extends State<EmbeddingView> {
                         });
                       },
                       hint: const Text(
-                        'Choose Noise',
+                        'Without Noise',
                       ),
                       underline: const SizedBox(),
                       icon: const SizedBox(),
@@ -364,70 +399,71 @@ class _EmbeddingViewState extends State<EmbeddingView> {
                       child: Text(
                         'Embedding',
                         style: AppTypography.regular12.copyWith(
-                            fontSize: 16, color: const Color(0xff602B6F)),
+                            fontSize: 16, color: const Color(0xff602B6F), fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 15),
-                  Center(
-                      child: Text('Stego-Image',
-                          style:
-                              AppTypography.regular12.copyWith(fontSize: 18))),
-                  const SizedBox(height: 10),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 20),
-                    width: double.infinity,
-                    height: 236,
-                    color: Colors.white,
-                  ),
-                  const SizedBox(height: 10),
-                  Center(
-                      child: Text('Stego-Image (After)',
-                          style:
-                              AppTypography.regular12.copyWith(fontSize: 18))),
-                  const SizedBox(height: 10),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 20),
-                    width: double.infinity,
-                    height: 236,
-                    color: Colors.white,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              side: const BorderSide(
-                                color: CustomColors.primaryPurple,
-                              ),
-                            ),
-                            backgroundColor: Colors.transparent,
-                            elevation: 0),
-                        onPressed: () {},
-                        child: Text('Save',
-                            style: AppTypography.regular12.copyWith(
-                                fontSize: 14, color: const Color(0xff602B6F))),
-                      ),
-                      const SizedBox(width: 40),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              side: const BorderSide(
-                                color: CustomColors.primaryPurple,
-                              ),
-                            ),
-                            backgroundColor: Colors.transparent,
-                            elevation: 0),
-                        onPressed: () {},
-                        child: Text('Share',
-                            style: AppTypography.regular12.copyWith(
-                                fontSize: 14, color: const Color(0xff602B6F))),
-                      ),
-                    ],
-                  )
+                  SizedBox(height: 20),
+                  // const SizedBox(height: 15),
+                  // Center(
+                  //     child: Text('Stego-Image',
+                  //         style:
+                  //             AppTypography.regular12.copyWith(fontSize: 18))),
+                  // const SizedBox(height: 10),
+                  // Container(
+                  //   margin: const EdgeInsets.only(bottom: 20),
+                  //   width: double.infinity,
+                  //   height: 236,
+                  //   color: Colors.white,
+                  // ),
+                  // const SizedBox(height: 10),
+                  // Center(
+                  //     child: Text('Stego-Image (After)',
+                  //         style:
+                  //             AppTypography.regular12.copyWith(fontSize: 18))),
+                  // const SizedBox(height: 10),
+                  // Container(
+                  //   margin: const EdgeInsets.only(bottom: 20),
+                  //   width: double.infinity,
+                  //   height: 236,
+                  //   color: Colors.white,
+                  // ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     ElevatedButton(
+                  //       style: ElevatedButton.styleFrom(
+                  //           shape: RoundedRectangleBorder(
+                  //             borderRadius: BorderRadius.circular(10),
+                  //             side: const BorderSide(
+                  //               color: CustomColors.primaryPurple,
+                  //             ),
+                  //           ),
+                  //           backgroundColor: Colors.transparent,
+                  //           elevation: 0),
+                  //       onPressed: () {},
+                  //       child: Text('Save',
+                  //           style: AppTypography.regular12.copyWith(
+                  //               fontSize: 14, color: const Color(0xff602B6F))),
+                  //     ),
+                  //     const SizedBox(width: 40),
+                  //     ElevatedButton(
+                  //       style: ElevatedButton.styleFrom(
+                  //           shape: RoundedRectangleBorder(
+                  //             borderRadius: BorderRadius.circular(10),
+                  //             side: const BorderSide(
+                  //               color: CustomColors.primaryPurple,
+                  //             ),
+                  //           ),
+                  //           backgroundColor: Colors.transparent,
+                  //           elevation: 0),
+                  //       onPressed: () {},
+                  //       child: Text('Share',
+                  //           style: AppTypography.regular12.copyWith(
+                  //               fontSize: 14, color: const Color(0xff602B6F))),
+                  //     ),
+                  //   ],
+                  // )
                 ],
               ),
             ),

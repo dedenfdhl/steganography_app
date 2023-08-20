@@ -15,7 +15,31 @@
       },
       "oauth_client": [
         {
-          "client_id": "379367404299-81e3q319jiam0e7gm5nkunou3hfgcnpj.apps.googleusercontent.com",
+          "client_id": "379367404299-30ahq7k70llaiabmjpqhscpaf3kd74bn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.steganography_app",
+            "certificate_hash": "d1924e242aa2bd1ad90096945b001295e1978f11"
+          }
+        },
+        {
+          "client_id": "379367404299-bhp2la5e0rfg61k5pi6vvf87d5d9dr23.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.steganography_app",
+            "certificate_hash": "4cfc0f885eed728fc80f691ef6ea050b869ba20a"
+          }
+        },
+        {
+          "client_id": "379367404299-mialtmkiqvvqe2lqslo1afvvfvr5oj72.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.steganography_app",
+            "certificate_hash": "17df23f958e05498726eb5583c9a4dcbf893c3a9"
+          }
+        },
+        {
+          "client_id": "379367404299-kmi4qr3e14mq55kfkk6o8d1inhapfms1.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

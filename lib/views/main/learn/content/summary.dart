@@ -36,7 +36,7 @@ class MyStatefulWidget extends StatefulWidget {
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   final pdfPinchcontroller = PdfControllerPinch(
-    document: PdfDocument.openAsset('assets/images/sample.pdf'),
+    document: PdfDocument.openAsset('assets/images/summary.pdf'),
   );
 
   @override

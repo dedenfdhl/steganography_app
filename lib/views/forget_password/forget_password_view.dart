@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 // ignore: unused_import
 import 'package:steganography_app/constants/typo.dart';
 import 'package:steganography_app/data/auth_service.dart';
@@ -60,28 +59,28 @@ class _ForgetPasswordViewState extends State<ForgetPasswordView> {
                       const Spacer(),
                       Container(
                           child: 
-                          SvgPicture.asset('assets/images/6.svg', width: 400,),
+                          Image.asset('assets/images/or.png', height: 300, ),
                       ),
-                      const SizedBox(height: 34),
-                      const Text(
+                      
+                      Text(
                         'Forget Password',
-                        style: TextStyle(fontSize: 30),
+                        style: AppTypography.medium.copyWith(fontSize: 30),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 34),
-                      const Text(
+                      const SizedBox(height: 20),
+                      Text(
                         "Don't worry it happens. Please enter the address associated with your account.",
-                        style: TextStyle(
+                        style: AppTypography.regular12.copyWith(
                           fontSize: 16,
                           color: CustomColors.primaryPurple,
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 39),
+                      const SizedBox(height: 20),
                       CustomTextField(controller: _emailController,
                         hintText: 'Enter your email',
                       ),
-                      const SizedBox(height: 34),
+                      const SizedBox(height: 20),
                       CustomButton(
                         textButton: 'Submit',
                         onPressed: () async {

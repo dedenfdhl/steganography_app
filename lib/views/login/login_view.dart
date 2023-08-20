@@ -2,6 +2,7 @@ import 'dart:developer' as dev;
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:steganography_app/constants/custom_colors.dart';
 import 'package:steganography_app/constants/typo.dart';
 import 'package:steganography_app/data/firebase_database_service.dart';
 import 'package:steganography_app/views/forget_password/forget_password_view.dart';
@@ -111,6 +112,11 @@ class _LoginViewState extends State<LoginView> {
     }
   }
 
+  Future<void> loginGoogleAction() async {
+    // ignore: unused_local_variable
+    final gLogin = await AuthService.signInWithGoogle();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -181,7 +187,7 @@ class _LoginViewState extends State<LoginView> {
                                 'Forgot Password',
                                 style: AppTypography.regular12.copyWith(
                                     fontSize: 14,
-                                    color: const Color(0xff060606)),
+                                    color: Colors.black),
                               ),
                             ),
                           ]),
@@ -190,8 +196,22 @@ class _LoginViewState extends State<LoginView> {
                     _buildHorizontalRule(),
                     const SizedBox(height: 12),
                     _buildSignUpQuestion(),
-                    const Spacer(),
-                  ],
+                    const SizedBox(height: 20),
+                                GestureDetector(
+                                  onTap: loginGoogleAction,
+                                  child: Container( 
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Image.asset('assets/images/logo google.jpeg', height: 30,),
+                                          SizedBox(width: 5),
+                                          Text('Login with Google', style: AppTypography.regular12.copyWith(fontSize: 14),)
+                                        ],
+                                      )
+                                  ),
+                                ),
+                        Spacer()
+                      ],                  
                 ),
               ),
             ),
@@ -233,7 +253,7 @@ class _LoginViewState extends State<LoginView> {
           child: Text(
             'Sign up',
             style: AppTypography.regular12
-                .copyWith(color: Colors.black, fontSize: 14),
+                .copyWith(color: Colors.blue, fontSize: 14),
           ),
         )
       ],

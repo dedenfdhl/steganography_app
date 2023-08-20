@@ -127,7 +127,7 @@ class _RegistrationViewState extends State<RegistrationView> {
                     const Spacer(),
                     Text(
                       'Register',
-                      style: AppTypography.medium.copyWith(fontSize: 48),
+                      style: AppTypography.medium.copyWith(fontSize: 40),
                     ),
                     const SizedBox(height: 24),
                     Form(

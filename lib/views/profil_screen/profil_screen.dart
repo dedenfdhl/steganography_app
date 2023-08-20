@@ -12,6 +12,9 @@ class ProfilScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Text('Profile Screen', 
+        style: AppTypography.title.copyWith(color: CustomColors.primaryPurple, fontSize: 24),),
+        centerTitle: true,
         backgroundColor: const Color(0xffF7E7FB),
         elevation: 0,
         leading: IconButton(onPressed: () {
@@ -24,19 +27,21 @@ class ProfilScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              height: 120,
-              width: 120,
+              height: 100,
+              width: 100,
               decoration: const BoxDecoration(
                 shape: BoxShape.circle, color: Color(0xFFF5AE52)
               ),
               child: Center(
-                child: Text(AuthService.currentUser!.email![0].toUpperCase(), style: AppTypography.medium.copyWith(fontSize: 40, color: CustomColors.primaryPurple)),
+                child: Text(
+                  AuthService.currentUser!.email![0].toUpperCase(), 
+                  style: AppTypography.medium.copyWith(fontSize: 40, color: CustomColors.primaryPurple)),
               ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(height: 20),
             Text(AuthService.currentUser!.email!, style: AppTypography.regular12.copyWith(fontSize: 18, color: CustomColors.primaryPurple)
             ),
-            const SizedBox(height: 50),
+            const SizedBox(height: 30),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
               child: ElevatedButton(
@@ -53,7 +58,7 @@ class ProfilScreen extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       child: 
-                      Text('Log Out',style: AppTypography.medium.copyWith(fontSize: 24, color: Colors.white)
+                      Text('Log Out',style: AppTypography.regular12.copyWith(fontSize: 20, fontWeight: FontWeight.bold)
                       ),
                 ),
               ),
